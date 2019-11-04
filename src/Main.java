@@ -8,6 +8,7 @@ public class Main {
     public static void main(String[] args) throws IOException, ParseException {
         if (args.length <= 0) {
             System.out.println("Invalid number of arguments");
+            return;
         }
 
         File input = new File(args[0]);
