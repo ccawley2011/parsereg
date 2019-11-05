@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,6 +22,19 @@ public class AttendanceTable {
                 students.put(entry.studentNumber, new AttendanceRow(entry.studentNumber, entry.studentName));
             }
             students.get(entry.studentNumber).lectures.put(register.startTime, entry);
+        }
+    }
+
+    public void addRegister(File file) throws IOException, ParseException {
+        if (file.isDirectory()) {
+            for (File subFile : file.listFiles()) {
+                String extension = subFile.getName().substring(subFile.getName().lastIndexOf('.') + 1);
+                if (extension.equals("htm") || extension.equals("html")) {
+                    addRegister(subFile);
+                }
+            }
+        } else {
+            addRegister(new Register(file));
         }
     }
 

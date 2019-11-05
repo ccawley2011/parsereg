@@ -6,15 +6,27 @@ import java.text.ParseException;
 public class Main {
 
     public static void main(String[] args) throws IOException, ParseException {
-        if (args.length <= 0) {
-            System.out.println("Invalid number of arguments");
-            return;
-        }
-
         AttendanceTable attendanceTable = new AttendanceTable();
-        for (int i = 0; i < args.length; i++) {
-            File input = new File(args[i]);
-            attendanceTable.addRegister(new Register(input));
+        if (args.length <= 0) {
+            JFileChooser fc = new JFileChooser();
+            fc.removeChoosableFileFilter(fc.getAcceptAllFileFilter());
+            fc.addChoosableFileFilter(new FileNameExtensionFilter("HTML documents", "html", "htm"));
+            fc.setMultiSelectionEnabled(true);
+            fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+
+            int returnVal = fc.showOpenDialog(null);
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                for (File input : fc.getSelectedFiles()) {
+                    attendanceTable.addRegister(input);
+                }
+            } else {
+                return;
+            }
+        } else {
+            for (String arg : args) {
+                File input = new File(arg);
+                attendanceTable.addRegister(input);
+            }
         }
 
         JFileChooser fc = new JFileChooser();
