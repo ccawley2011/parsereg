@@ -1,10 +1,9 @@
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.*;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
+import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import java.io.*;
 import java.text.ParseException;
 import java.util.*;
 
@@ -63,6 +62,43 @@ public class Main {
         }
     }
 
+    private static void writeExcelFile(File output, boolean xssf,  ArrayList<Register> registers, HashMap<String, String> students, HashMap<String, HashMap<Date, RegisterEntry>> attendance) throws IOException {
+        try (Workbook wb = WorkbookFactory.create(xssf)) {
+            Sheet sheet = wb.createSheet("new sheet");
+            writeExcelHeader(wb, sheet, registers);
+            writeExcelEntries(sheet, registers, students, attendance);
+
+            // Write the output to a file
+            try (FileOutputStream fileOut = new FileOutputStream(output)) {
+                wb.write(fileOut);
+            }
+        }
+    }
+
+    private static void writeCSVFile(File output,  ArrayList<Register> registers, HashMap<String, String> students, HashMap<String, HashMap<Date, RegisterEntry>> attendance) throws IOException {
+        FileWriter outFile = new FileWriter(output);
+        outFile.write("Student ID,Student Name");
+        for (Register register : registers) {
+            outFile.write(",\"" + register.startTime + "\"");
+        }
+        outFile.write('\n');
+
+        for (Map.Entry me : attendance.entrySet()) {
+            outFile.write("\"" + me.getKey() + "\",\"" + students.get(me.getKey())+"\"");
+            HashMap<Date, RegisterEntry> lectures = (HashMap<Date, RegisterEntry>) me.getValue();
+            for (Register register : registers) {
+                if (lectures.containsKey(register.startTime)) {
+                    outFile.write("," + lectures.get(register.startTime).getSignatureString(true));
+                } else {
+                    outFile.write(",UNKNOWN");
+                }
+            }
+            outFile.write('\n');
+        }
+        outFile.close();
+
+    }
+
     public static void main(String[] args) throws IOException, ParseException {
         if (args.length <= 0) {
             System.out.println("Invalid number of arguments");
@@ -86,37 +122,32 @@ public class Main {
             }
         }
 
-        FileWriter output = new FileWriter("output.csv");
-        output.write("Student ID,Student Name");
-        for (Register register : registers) {
-            output.write(",\"" + register.startTime + "\"");
-        }
-        output.write('\n');
+        JFileChooser fc = new JFileChooser();
+        fc.removeChoosableFileFilter(fc.getAcceptAllFileFilter());
+        fc.addChoosableFileFilter(new FileNameExtensionFilter("Excel spreadsheet", "xlsx"));
+        fc.addChoosableFileFilter(new FileNameExtensionFilter("Excel 97-2003 spreadsheet", "xls", "xlt"));
+        fc.addChoosableFileFilter(new FileNameExtensionFilter("Comma Separated Values file", "csv"));
 
-        for (Map.Entry me : attendance.entrySet()) {
-            output.write("\"" + me.getKey() + "\",\"" + students.get(me.getKey())+"\"");
-            HashMap<Date, RegisterEntry> lectures = (HashMap<Date, RegisterEntry>) me.getValue();
-            for (Register register : registers) {
-                if (lectures.containsKey(register.startTime)) {
-                    output.write("," + lectures.get(register.startTime).getSignatureString(true));
-                } else {
-                    output.write(",UNKNOWN");
-                }
-            }
-            output.write('\n');
-        }
-        output.close();
-
-        try (Workbook wb = WorkbookFactory.create(false)) {
-            Sheet sheet = wb.createSheet("new sheet");
-            writeExcelHeader(wb, sheet, registers);
-            writeExcelEntries(sheet, registers, students, attendance);
-
-
-            // Write the output to a file
-            try (FileOutputStream fileOut = new FileOutputStream("workbook.xls")) {
-                wb.write(fileOut);
+        int returnVal = fc.showSaveDialog(null);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            String extension = fc.getSelectedFile().getName().substring(fc.getSelectedFile().getName().lastIndexOf('.') + 1);
+            switch (extension) {
+                case "xlsx":
+                    writeExcelFile(fc.getSelectedFile(), true, registers, students, attendance);
+                    break;
+                case "xls":
+                case "xlt":
+                    writeExcelFile(fc.getSelectedFile(), false, registers, students, attendance);
+                    break;
+                case "csv":
+                    writeCSVFile(fc.getSelectedFile(), registers, students, attendance);
+                    break;
+                default:
+                    JOptionPane.showMessageDialog(null, "Unrecognized file extension: " + extension, "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
             }
         }
+
+        JOptionPane.showMessageDialog(null, "Exporting as a spreadsheet was successful.");
     }
 }
