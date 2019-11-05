@@ -17,19 +17,21 @@ public class AttendanceRow {
         studentName = _studentName;
     }
 
-    public void writeCSV(FileWriter outFile, ArrayList<Register> registers) throws IOException {
+    public void writeCSV(FileWriter outFile, ArrayList<Register> registers, String module) throws IOException {
         outFile.write("\"" + studentNumber + "\",\"" + studentName + "\"");
         for (Register register : registers) {
-            if (lectures.containsKey(register.startTime)) {
-                outFile.write("," + lectures.get(register.startTime).getSignatureString(true));
-            } else {
-                outFile.write(",UNKNOWN");
+            if (register.module.equals(module)) {
+                if (lectures.containsKey(register.startTime)) {
+                    outFile.write("," + lectures.get(register.startTime).getSignatureString(true));
+                } else {
+                    outFile.write(",UNKNOWN");
+                }
             }
         }
         outFile.write('\n');
     }
 
-    public void writeExcel(Row row, ArrayList<Register> registers) {
+    public void writeExcel(Row row, ArrayList<Register> registers, String module) {
         int column = 0;
 
         Cell cell = row.createCell(column++);
@@ -39,11 +41,13 @@ public class AttendanceRow {
         cell.setCellValue(studentName);
 
         for (Register register : registers) {
-            cell = row.createCell(column++);
-            if (lectures.containsKey(register.startTime)) {
-                cell.setCellValue(lectures.get(register.startTime).getSignatureString(true));
-            } else {
-                cell.setCellValue("UNKNOWN");
+            if (register.module.equals(module)) {
+                cell = row.createCell(column++);
+                if (lectures.containsKey(register.startTime)) {
+                    cell.setCellValue(lectures.get(register.startTime).getSignatureString(true));
+                } else {
+                    cell.setCellValue("UNKNOWN");
+                }
             }
         }
     }

@@ -11,12 +11,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class AttendanceTable {
+    public ArrayList<String> moduleList = new ArrayList<String>();
     public ArrayList<Register> registers = new ArrayList<Register>();
-    public HashMap<String, AttendanceRow> students = new HashMap<String, AttendanceRow>();
+    public HashMap<String, HashMap<String, AttendanceRow>> modules = new HashMap<String, HashMap<String, AttendanceRow>>();
 
     public void addRegister(Register register) {
         registers.add(register);
 
+        if (!moduleList.contains(register.module)) {
+            moduleList.add(register.module);
+            modules.put(register.module, new HashMap<String, AttendanceRow>());
+        }
+
+        HashMap<String, AttendanceRow> students = modules.get(register.module);
         for (RegisterEntry entry : register.entries) {
             if (!students.containsKey(entry.studentNumber)) {
                 students.put(entry.studentNumber, new AttendanceRow(entry.studentNumber, entry.studentName));
@@ -40,38 +47,44 @@ public class AttendanceTable {
 
     public void writeExcel(File output, boolean xssf) throws IOException {
         try (Workbook wb = WorkbookFactory.create(xssf)) {
-            Sheet sheet = wb.createSheet("new sheet");
-
             CellStyle headerStyle = wb.createCellStyle();
-             Font font = wb.createFont();
-             font.setBold(true);
-             headerStyle.setFont(font);
+            Font font = wb.createFont();
+            font.setBold(true);
+            headerStyle.setFont(font);
 
-            // Create a row and put some cells in it. Rows are 0 based.
-            Row header = sheet.createRow(0);
-            int column = 0;
-            Cell cell = header.createCell(column++);
-            cell.setCellValue("Student ID");
-            cell.setCellStyle(headerStyle);
+            CellStyle dateStyle = wb.createCellStyle();
+            dateStyle.cloneStyleFrom(headerStyle);
+            dateStyle.setDataFormat(HSSFDataFormat.getBuiltinFormat("m/d/yy h:mm"));
 
-            cell = header.createCell(column++);
-            cell.setCellValue("Student Name");
-            cell.setCellStyle(headerStyle);
+            for (String module : moduleList) {
+                Sheet sheet = wb.createSheet(module);
 
-            headerStyle.setDataFormat(HSSFDataFormat.getBuiltinFormat("m/d/yy h:mm"));
-            for (Register register : registers) {
-                cell = header.createCell(column++);
-                cell.setCellValue(register.startTime);
+                Row header = sheet.createRow(0);
+                int column = 0;
+                Cell cell = header.createCell(column++);
+                cell.setCellValue("Student ID");
                 cell.setCellStyle(headerStyle);
+
+                cell = header.createCell(column++);
+                cell.setCellValue("Student Name");
+                cell.setCellStyle(headerStyle);
+
+                for (Register register : registers) {
+                    if (register.module.equals(module)) {
+                        cell = header.createCell(column++);
+                        cell.setCellValue(register.startTime);
+                        cell.setCellStyle(dateStyle);
+                    }
+                }
+
+                int rowNumber = 1;
+                HashMap<String, AttendanceRow> students = modules.get(module);
+                for (Map.Entry me : students.entrySet()) {
+                    AttendanceRow row = (AttendanceRow) me.getValue();
+                    row.writeExcel(sheet.createRow(rowNumber++), registers, module);
+                }
             }
 
-            int rowNumber = 1;
-            for (Map.Entry me : students.entrySet()) {
-                AttendanceRow row = (AttendanceRow) me.getValue();
-                row.writeExcel(sheet.createRow(rowNumber++), registers);
-            }
-
-            // Write the output to a file
             try (FileOutputStream fileOut = new FileOutputStream(output)) {
                 wb.write(fileOut);
             }
@@ -81,14 +94,18 @@ public class AttendanceTable {
     public void writeCSV(File output) throws IOException {
         FileWriter outFile = new FileWriter(output);
         outFile.write("Student ID,Student Name");
+        String module = moduleList.get(0);
         for (Register register : registers) {
-            outFile.write(",\"" + register.startTime + "\"");
+            if (register.module.equals(module)) {
+                outFile.write(",\"" + register.startTime + "\"");
+            }
         }
         outFile.write('\n');
 
+        HashMap<String, AttendanceRow> students = modules.get(module);
         for (Map.Entry me : students.entrySet()) {
             AttendanceRow row = (AttendanceRow) me.getValue();
-            row.writeCSV(outFile, registers);
+            row.writeCSV(outFile, registers, module);
         }
         outFile.close();
     }
