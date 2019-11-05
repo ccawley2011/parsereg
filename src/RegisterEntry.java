@@ -13,14 +13,14 @@ public class RegisterEntry {
         NOT_EXPECTED
     }
 
-    public String getSignatureString() {
-        if (signature == Signature.PRESENT) {
+    public String getSignatureString(boolean checkComment) {
+        if (signature == Signature.NOT_EXPECTED || (checkComment && !comments.isEmpty())) {
+            return "NOT EXPECTED";
+        } else if (signature == Signature.PRESENT) {
             return "PRESENT";
         } else if (signature == Signature.ABSENT) {
             return "ABSENT";
-        } else if (signature == Signature.NOT_EXPECTED) {
-            return "NOT EXPECTED";
-        } else {
+        } else  {
             return "UNKNOWN";
         }
     }
