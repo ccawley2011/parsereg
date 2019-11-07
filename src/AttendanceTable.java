@@ -1,5 +1,6 @@
 import org.apache.poi.hssf.usermodel.HSSFDataFormat;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellRangeAddress;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -90,6 +91,8 @@ public class AttendanceTable {
                     AttendanceRow row = (AttendanceRow) me.getValue();
                     row.writeExcel(wb, sheet, sheet.createRow(rowNumber++), registers, module);
                 }
+
+                sheet.setAutoFilter(new CellRangeAddress(0, sheet.getLastRowNum(), 0, column + 1));
             }
 
             try (FileOutputStream fileOut = new FileOutputStream(output)) {
