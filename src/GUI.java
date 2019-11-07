@@ -110,6 +110,10 @@ public class GUI extends JPanel implements ActionListener {
                 JOptionPane.showMessageDialog(frame, "Failed to create file: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 e.printStackTrace();
                 return false;
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(frame, "Failed to export spreadsheet: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
+                return false;
             }
 
             JOptionPane.showMessageDialog(frame, "Exporting as a spreadsheet was successful.");

@@ -1,4 +1,5 @@
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellRangeAddress;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -17,17 +18,25 @@ public class AttendanceRow {
     }
 
     public void writeCSV(FileWriter outFile, ArrayList<Register> registers, String module) throws IOException {
+        int present = 0, notExpected = 0;
         outFile.write("\"" + studentNumber + "\",\"" + studentName + "\"");
         for (Register register : registers) {
             if (register.module.equals(module)) {
                 if (lectures.containsKey(register.startTime)) {
-                    outFile.write("," + lectures.get(register.startTime).getSignatureString(true));
+                    RegisterEntry entry = lectures.get(register.startTime);
+                    outFile.write("," + entry.getSignatureString(true));
+
+                    if (entry.signature == RegisterEntry.Signature.PRESENT) {
+                        present += 1;
+                    } else if (!entry.comments.isEmpty()) {
+                        notExpected += 1;
+                    }
                 } else {
                     outFile.write(",UNKNOWN");
                 }
             }
         }
-        outFile.write('\n');
+        outFile.write("," + present + "," + (present + notExpected) + '\n');
     }
 
     public void writeExcel(Workbook wb, Sheet sheet, Row row, ArrayList<Register> registers, String module) {
@@ -64,6 +73,12 @@ public class AttendanceRow {
                 }
             }
         }
+
+        CellRangeAddress address = new CellRangeAddress(row.getRowNum(), row.getRowNum(), 2, column - 1);
+        Cell presentSum = row.createCell(column++);
+        presentSum.setCellFormula("COUNTIF("+address.formatAsString()+",\"PRESENT\")");
+        Cell notExpectedSum = row.createCell(column++);
+        notExpectedSum.setCellFormula(presentSum.getAddress().formatAsString()+"+COUNTIF("+address.formatAsString()+",\"NOT EXPECTED\")");
     }
 
 }
