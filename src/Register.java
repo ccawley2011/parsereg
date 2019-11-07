@@ -66,7 +66,7 @@ public class Register {
                 entry.studentNumber = columns.get(1).text();
                 entry.studentName = columns.get(2).text();
                 entry.setSignatureFromString(columns.get(3).text());
-                entry.comments = columns.get(4).text();
+                entry.comments = columns.get(4).html().replaceAll("<([^<]*)>", "");
                 entries.add(entry);
             }
 
@@ -75,7 +75,7 @@ public class Register {
                 entry.studentNumber = columns.get(6).text();
                 entry.studentName = columns.get(7).text();
                 entry.setSignatureFromString(columns.get(8).text());
-                entry.comments = columns.get(9).text();
+                entry.comments = columns.get(9).html().replaceAll("<([^<]*)>", "");
                 entries.add(entry);
             }
         }

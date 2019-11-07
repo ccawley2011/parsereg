@@ -81,7 +81,7 @@ public class AttendanceTable {
                 HashMap<String, AttendanceRow> students = modules.get(module);
                 for (Map.Entry me : students.entrySet()) {
                     AttendanceRow row = (AttendanceRow) me.getValue();
-                    row.writeExcel(sheet.createRow(rowNumber++), registers, module);
+                    row.writeExcel(wb, sheet, sheet.createRow(rowNumber++), registers, module);
                 }
             }
 

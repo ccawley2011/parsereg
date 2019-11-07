@@ -1,5 +1,4 @@
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.*;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -31,8 +30,16 @@ public class AttendanceRow {
         outFile.write('\n');
     }
 
-    public void writeExcel(Row row, ArrayList<Register> registers, String module) {
+    public void writeExcel(Workbook wb, Sheet sheet, Row row, ArrayList<Register> registers, String module) {
+        CreationHelper creationHelper = wb.getCreationHelper();
+        Drawing<?> patr = sheet.createDrawingPatriarch();
         int column = 0;
+
+        ClientAnchor clientAnchor = creationHelper.createClientAnchor();
+        clientAnchor.setCol1(4);
+        clientAnchor.setRow1(2);
+        clientAnchor.setCol2(7);
+        clientAnchor.setRow2(7);
 
         Cell cell = row.createCell(column++);
         cell.setCellValue(studentNumber);
@@ -44,7 +51,14 @@ public class AttendanceRow {
             if (register.module.equals(module)) {
                 cell = row.createCell(column++);
                 if (lectures.containsKey(register.startTime)) {
-                    cell.setCellValue(lectures.get(register.startTime).getSignatureString(true));
+                    RegisterEntry entry = lectures.get(register.startTime);
+                    cell.setCellValue(entry.getSignatureString(true));
+
+                    if (!entry.comments.isEmpty()) {
+                        Comment comment = patr.createCellComment(clientAnchor);
+                        comment.setString(creationHelper.createRichTextString(entry.comments));
+                        cell.setCellComment(comment);
+                    }
                 } else {
                     cell.setCellValue("UNKNOWN");
                 }
