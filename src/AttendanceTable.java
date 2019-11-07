@@ -52,7 +52,7 @@ public class AttendanceTable {
         registers.clear();
     }
 
-    public void writeExcel(File output, boolean xssf) throws IOException {
+    public void writeExcel(File output, boolean xssf, String defaultModule) throws IOException {
         try (Workbook wb = WorkbookFactory.create(xssf)) {
             CellStyle headerStyle = wb.createCellStyle();
             Font font = wb.createFont();
@@ -66,6 +66,12 @@ public class AttendanceTable {
             for (String module : moduleList) {
                 Sheet sheet = wb.createSheet(module);
                 sheet.createFreezePane(2, 1);
+                if (module.equals(defaultModule)) {
+                    wb.setActiveSheet(wb.getSheetIndex(sheet));
+                    sheet.setSelected(true);
+                } else {
+                    sheet.setSelected(false);
+                }
 
                 Row header = sheet.createRow(0);
                 int column = 0;
@@ -124,10 +130,9 @@ public class AttendanceTable {
         }
     }
 
-    public void writeCSV(File output) throws IOException {
+    public void writeCSV(File output, String module) throws IOException {
         FileWriter outFile = new FileWriter(output);
         outFile.write("Student ID,Student Name");
-        String module = moduleList.get(0);
         for (Register register : registers) {
             if (register.module.equals(module)) {
                 outFile.write(",\"" + register.startTime + "\"");

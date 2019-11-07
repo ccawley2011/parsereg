@@ -1,7 +1,6 @@
 import javax.swing.*;
+import javax.swing.border.BevelBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.StyledDocument;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -87,20 +86,32 @@ public class GUI extends JPanel implements ActionListener {
         fc.addChoosableFileFilter(new FileNameExtensionFilter("Excel 97-2003 spreadsheet", "xls", "xlt"));
         fc.addChoosableFileFilter(new FileNameExtensionFilter("Comma Separated Values file", "csv"));
 
+        JPanel accessory = new JPanel();
+        accessory.setLayout(new FlowLayout());
+        accessory.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+        fc.setAccessory(accessory);
+
+        JLabel label = new JLabel("Default module:");
+        accessory.add(label);
+
+        String[] moduleString = attendanceTable.moduleList.toArray(new String[attendanceTable.modules.size()]);
+        JComboBox<String> moduleList = new JComboBox<String>(moduleString);
+        accessory.add(moduleList);
+
         int returnVal = fc.showSaveDialog(frame);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             try {
                 String extension = fc.getSelectedFile().getName().substring(fc.getSelectedFile().getName().lastIndexOf('.') + 1);
                 switch (extension) {
                     case "xlsx":
-                        attendanceTable.writeExcel(fc.getSelectedFile(), true);
+                        attendanceTable.writeExcel(fc.getSelectedFile(), true, (String) moduleList.getSelectedItem());
                         break;
                     case "xls":
                     case "xlt":
-                        attendanceTable.writeExcel(fc.getSelectedFile(), false);
+                        attendanceTable.writeExcel(fc.getSelectedFile(), false, (String) moduleList.getSelectedItem());
                         break;
                     case "csv":
-                        attendanceTable.writeCSV(fc.getSelectedFile());
+                        attendanceTable.writeCSV(fc.getSelectedFile(), (String) moduleList.getSelectedItem());
                         break;
                     default:
                         JOptionPane.showMessageDialog(frame, "Unrecognized file extension: " + extension, "Error", JOptionPane.ERROR_MESSAGE);
