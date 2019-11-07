@@ -93,6 +93,29 @@ public class AttendanceTable {
                 }
 
                 sheet.setAutoFilter(new CellRangeAddress(0, sheet.getLastRowNum(), 0, column + 1));
+
+                SheetConditionalFormatting sheetCF = sheet.getSheetConditionalFormatting();
+                CellRangeAddress[] regions = {
+                        new CellRangeAddress(1, sheet.getLastRowNum(), 2, column - 1)
+                };
+
+                ConditionalFormattingRule presentRule = sheetCF.createConditionalFormattingRule(ComparisonOperator.EQUAL, "\"PRESENT\"");
+                PatternFormatting presentFill = presentRule.createPatternFormatting();
+                presentFill.setFillBackgroundColor(IndexedColors.LIGHT_GREEN.index);
+                presentFill.setFillPattern(PatternFormatting.SOLID_FOREGROUND);
+                sheetCF.addConditionalFormatting(regions, presentRule);
+
+                ConditionalFormattingRule absentRule = sheetCF.createConditionalFormattingRule(ComparisonOperator.EQUAL, "\"ABSENT\"");
+                PatternFormatting absentFill = absentRule.createPatternFormatting();
+                absentFill.setFillBackgroundColor(IndexedColors.ROSE.index);
+                absentFill.setFillPattern(PatternFormatting.SOLID_FOREGROUND);
+                sheetCF.addConditionalFormatting(regions, absentRule);
+
+                ConditionalFormattingRule notExpectedRule = sheetCF.createConditionalFormattingRule(ComparisonOperator.EQUAL, "\"NOT EXPECTED\"");
+                PatternFormatting notExpectedFill = notExpectedRule.createPatternFormatting();
+                notExpectedFill.setFillBackgroundColor(IndexedColors.LIGHT_YELLOW.index);
+                notExpectedFill.setFillPattern(PatternFormatting.SOLID_FOREGROUND);
+                sheetCF.addConditionalFormatting(regions, notExpectedRule);
             }
 
             try (FileOutputStream fileOut = new FileOutputStream(output)) {
