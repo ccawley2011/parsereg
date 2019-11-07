@@ -45,6 +45,12 @@ public class AttendanceTable {
         }
     }
 
+    public void clear() {
+        modules.clear();
+        moduleList.clear();
+        registers.clear();
+    }
+
     public void writeExcel(File output, boolean xssf) throws IOException {
         try (Workbook wb = WorkbookFactory.create(xssf)) {
             CellStyle headerStyle = wb.createCellStyle();
