@@ -64,6 +64,7 @@ public class AttendanceTable {
 
             for (String module : moduleList) {
                 Sheet sheet = wb.createSheet(module);
+                sheet.createFreezePane(2, 1);
 
                 Row header = sheet.createRow(0);
                 int column = 0;
