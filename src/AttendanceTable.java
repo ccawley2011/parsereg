@@ -122,6 +122,13 @@ public class AttendanceTable {
                 notExpectedFill.setFillBackgroundColor(IndexedColors.LIGHT_YELLOW.index);
                 notExpectedFill.setFillPattern(PatternFormatting.SOLID_FOREGROUND);
                 sheetCF.addConditionalFormatting(regions, notExpectedRule);
+
+                for (int x = 0; x < header.getPhysicalNumberOfCells(); x++) {
+                    sheet.autoSizeColumn(x);
+                    // autoSizeColumn doesn't calculate the column width correctly with certain fonts
+                    // like Calibri, so adjust the column width manually.
+                    sheet.setColumnWidth(x, sheet.getColumnWidth(x) + 200);
+                }
             }
 
             try (FileOutputStream fileOut = new FileOutputStream(output)) {
