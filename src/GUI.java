@@ -10,13 +10,21 @@ import java.io.IOException;
 import java.text.ParseException;
 
 public class GUI extends JPanel implements ActionListener {
-    private AttendanceTable attendanceTable = new AttendanceTable();
+    private AttendanceTable attendanceTable = new AttendanceTable(this);
     private JFrame frame;
     private JButton open, save;
     private JLabel label;
+    public JTextArea console;
 
     public GUI(JFrame _frame) {
+        super();
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         frame = _frame;
+
+        console = new JTextArea(30, 40);
+        console.setEditable(false);
+        JScrollPane scrollPane = new JScrollPane(console);
+        add(scrollPane);
 
         JPanel controlPane = new JPanel();
         open = new JButton("Open");
@@ -41,6 +49,8 @@ public class GUI extends JPanel implements ActionListener {
         controlPane.add(save);
 
         add(controlPane);
+
+        debug("ParseReg v1.00\nReady for Input\n");
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -56,6 +66,20 @@ public class GUI extends JPanel implements ActionListener {
         }
     }
 
+    public void debug(String message) {
+        console.append(message + "\n");
+    }
+
+    public void message(String message) {
+        console.append(message + "\n");
+        JOptionPane.showMessageDialog(frame, message);
+    }
+
+    public void error(String message) {
+        console.append(message + "\n");
+        JOptionPane.showMessageDialog(frame, message, "Error", JOptionPane.ERROR_MESSAGE);
+    }
+
     private boolean openFileDialog() {
         JFileChooser fc = new JFileChooser();
         fc.removeChoosableFileFilter(fc.getAcceptAllFileFilter());
@@ -65,14 +89,18 @@ public class GUI extends JPanel implements ActionListener {
 
         int returnVal = fc.showOpenDialog(frame);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
+            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             attendanceTable.clear();
             for (File input : fc.getSelectedFiles()) {
                 try {
                     attendanceTable.addRegister(input);
                 } catch (IOException | ParseException e) {
-                    JOptionPane.showMessageDialog(frame, "Failed to open file: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    error("Failed to open file: " + e.getMessage());
+                    e.printStackTrace();
                 }
             }
+            setCursor(null);
+            debug("Finished loading registers!\n");
             return true;
         } else {
             return false;
@@ -100,8 +128,10 @@ public class GUI extends JPanel implements ActionListener {
 
         int returnVal = fc.showSaveDialog(frame);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
+            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             try {
                 String extension = fc.getSelectedFile().getName().substring(fc.getSelectedFile().getName().lastIndexOf('.') + 1);
+                debug("Saving file " + fc.getSelectedFile() + "...");
                 switch (extension) {
                     case "xlsx":
                         attendanceTable.writeExcel(fc.getSelectedFile(), true, (String) moduleList.getSelectedItem());
@@ -114,21 +144,22 @@ public class GUI extends JPanel implements ActionListener {
                         attendanceTable.writeCSV(fc.getSelectedFile(), (String) moduleList.getSelectedItem());
                         break;
                     default:
-                        JOptionPane.showMessageDialog(frame, "Unrecognized file extension: " + extension, "Error", JOptionPane.ERROR_MESSAGE);
+                        error("Unrecognized file extension: " + extension);
                         return false;
                 }
+
+                setCursor(null);
+                message("Exporting as a spreadsheet was successful.\n");
+                return true;
             } catch (IOException e) {
-                JOptionPane.showMessageDialog(frame, "Failed to create file: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                error("Failed to create file: " + e.getMessage());
                 e.printStackTrace();
-                return false;
             } catch (Exception e) {
-                JOptionPane.showMessageDialog(frame, "Failed to export spreadsheet: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                error("Failed to export spreadsheet: " + e.getMessage());
                 e.printStackTrace();
-                return false;
             }
 
-            JOptionPane.showMessageDialog(frame, "Exporting as a spreadsheet was successful.");
-            return true;
+            setCursor(null);
         }
 
         return false;

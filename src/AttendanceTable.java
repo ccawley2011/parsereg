@@ -15,6 +15,11 @@ public class AttendanceTable {
     public ArrayList<String> moduleList = new ArrayList<String>();
     public ArrayList<Register> registers = new ArrayList<Register>();
     public HashMap<String, HashMap<String, AttendanceRow>> modules = new HashMap<String, HashMap<String, AttendanceRow>>();
+    private GUI gui;
+
+    public AttendanceTable(GUI _gui) {
+        gui = _gui;
+    }
 
     public void addRegister(Register register) {
         registers.add(register);
@@ -42,6 +47,7 @@ public class AttendanceTable {
                 }
             }
         } else {
+            gui.debug("Parsing register " + file.getName() +  "...");
             addRegister(new Register(file));
         }
     }
@@ -64,6 +70,7 @@ public class AttendanceTable {
             dateStyle.setDataFormat(HSSFDataFormat.getBuiltinFormat("m/d/yy h:mm"));
 
             for (String module : moduleList) {
+                gui.debug("Exporting sheet " + module +  "...");
                 Sheet sheet = wb.createSheet(module);
                 sheet.createFreezePane(2, 1);
                 if (module.equals(defaultModule)) {
