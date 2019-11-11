@@ -56,9 +56,7 @@ public class GUI extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         switch (e.getActionCommand()) {
             case "open":
-                if (openFileDialog()) {
-                    save.setEnabled(true);
-                }
+                openFileDialog();
                 break;
             case "save":
                 saveFileDialog();
@@ -80,16 +78,14 @@ public class GUI extends JPanel implements ActionListener {
         JOptionPane.showMessageDialog(frame, message, "Error", JOptionPane.ERROR_MESSAGE);
     }
 
-    private boolean openFileDialog() {
-        JFileChooser fc = new JFileChooser();
-        fc.removeChoosableFileFilter(fc.getAcceptAllFileFilter());
-        fc.addChoosableFileFilter(new FileNameExtensionFilter("HTML documents", "html", "htm"));
-        fc.setMultiSelectionEnabled(true);
-        fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+    public class OpenThread extends Thread {
+        private JFileChooser fc;
 
-        int returnVal = fc.showOpenDialog(frame);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        public OpenThread(JFileChooser _fc) {
+            fc = _fc;
+        }
+
+        public void run() {
             attendanceTable.clear();
             for (File input : fc.getSelectedFiles()) {
                 try {
@@ -99,15 +95,78 @@ public class GUI extends JPanel implements ActionListener {
                     e.printStackTrace();
                 }
             }
+
+            open.setEnabled(true);
+            save.setEnabled(true);
             setCursor(null);
             debug("Finished loading registers!\n");
-            return true;
-        } else {
-            return false;
         }
     }
 
-    private boolean saveFileDialog() {
+    private void openFileDialog() {
+        JFileChooser fc = new JFileChooser();
+        fc.removeChoosableFileFilter(fc.getAcceptAllFileFilter());
+        fc.addChoosableFileFilter(new FileNameExtensionFilter("HTML documents", "html", "htm"));
+        fc.setMultiSelectionEnabled(true);
+        fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+
+        int returnVal = fc.showOpenDialog(frame);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            open.setEnabled(false);
+            save.setEnabled(false);
+            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            (new OpenThread(fc)).start();
+        }
+    }
+
+    public class SaveThread extends Thread {
+        private GUI gui;
+        private JFileChooser fc;
+        private String module;
+
+        public SaveThread(GUI _gui, JFileChooser _fc, String _module) {
+            gui = _gui;
+            fc = _fc;
+            module = _module;
+        }
+
+        public void run() {
+            try {
+                String extension = fc.getSelectedFile().getName().substring(fc.getSelectedFile().getName().lastIndexOf('.') + 1);
+                debug("Saving file " + fc.getSelectedFile() + "...");
+                switch (extension) {
+                    case "xlsx":
+                        attendanceTable.writeExcel(fc.getSelectedFile(), true, module);
+                        message("Exporting as a spreadsheet was successful.\n");
+                        break;
+                    case "xls":
+                    case "xlt":
+                        attendanceTable.writeExcel(fc.getSelectedFile(), false, module);
+                        message("Exporting as a spreadsheet was successful.\n");
+                        break;
+                    case "csv":
+                        attendanceTable.writeCSV(fc.getSelectedFile(), module);
+                        message("Exporting as a spreadsheet was successful.\n");
+                        break;
+                    default:
+                        error("Unrecognized file extension: " + extension);
+                        break;
+                }
+            } catch (IOException e) {
+                error("Failed to create file: " + e.getMessage());
+                e.printStackTrace();
+            } catch (Exception e) {
+                error("Failed to export spreadsheet: " + e.getMessage());
+                e.printStackTrace();
+            }
+
+            open.setEnabled(true);
+            save.setEnabled(true);
+            setCursor(null);
+        }
+    }
+
+    private void saveFileDialog() {
         JFileChooser fc = new JFileChooser();
         fc.removeChoosableFileFilter(fc.getAcceptAllFileFilter());
         fc.addChoosableFileFilter(new FileNameExtensionFilter("Excel spreadsheet", "xlsx"));
@@ -128,41 +187,12 @@ public class GUI extends JPanel implements ActionListener {
 
         int returnVal = fc.showSaveDialog(frame);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
+            open.setEnabled(false);
+            save.setEnabled(false);
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            try {
-                String extension = fc.getSelectedFile().getName().substring(fc.getSelectedFile().getName().lastIndexOf('.') + 1);
-                debug("Saving file " + fc.getSelectedFile() + "...");
-                switch (extension) {
-                    case "xlsx":
-                        attendanceTable.writeExcel(fc.getSelectedFile(), true, (String) moduleList.getSelectedItem());
-                        break;
-                    case "xls":
-                    case "xlt":
-                        attendanceTable.writeExcel(fc.getSelectedFile(), false, (String) moduleList.getSelectedItem());
-                        break;
-                    case "csv":
-                        attendanceTable.writeCSV(fc.getSelectedFile(), (String) moduleList.getSelectedItem());
-                        break;
-                    default:
-                        error("Unrecognized file extension: " + extension);
-                        return false;
-                }
-
-                setCursor(null);
-                message("Exporting as a spreadsheet was successful.\n");
-                return true;
-            } catch (IOException e) {
-                error("Failed to create file: " + e.getMessage());
-                e.printStackTrace();
-            } catch (Exception e) {
-                error("Failed to export spreadsheet: " + e.getMessage());
-                e.printStackTrace();
-            }
-
-            setCursor(null);
+            (new SaveThread(this, fc, (String) moduleList.getSelectedItem())).start();
         }
 
-        return false;
     }
 
     public static JFrame createAndShowGUI() {
