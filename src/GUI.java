@@ -96,10 +96,15 @@ public class GUI extends JPanel implements ActionListener {
                 }
             }
 
+            if (attendanceTable.registers.isEmpty()) {
+                debug("No registers were found.\n");
+            } else {
+                save.setEnabled(true);
+                debug("Finished loading registers!\n");
+            }
+
             open.setEnabled(true);
-            save.setEnabled(true);
             setCursor(null);
-            debug("Finished loading registers!\n");
         }
     }
 
