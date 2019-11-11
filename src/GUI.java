@@ -135,28 +135,52 @@ public class GUI extends JPanel implements ActionListener {
             module = _module;
         }
 
+        private void save(String extension, File output, String defaultModule) throws IOException {
+            switch (extension) {
+                case "xlsx":
+                    attendanceTable.writeExcel(output, true, defaultModule);
+                    break;
+                case "xls":
+                case "xlt":
+                    attendanceTable.writeExcel(output, false, defaultModule);
+                    break;
+                case "csv":
+                    attendanceTable.writeCSV(output, defaultModule);
+                    break;
+                default:
+                    error("Unrecognized file extension: " + extension);
+                    break;
+            }
+
+        }
+
         public void run() {
+            FileNameExtensionFilter fileFilter = (FileNameExtensionFilter) fc.getFileFilter();
+            if (fileFilter==null) {
+                fileFilter = (FileNameExtensionFilter) fc.getChoosableFileFilters()[0];
+            }
+            String leafName = fc.getSelectedFile().getName();
+            String extension = "";
+            if (leafName.contains(".")) {
+                extension = leafName.substring(leafName.lastIndexOf('.') + 1);
+                leafName = leafName.substring(0, leafName.lastIndexOf('.'));
+            }
+
             try {
-                String extension = fc.getSelectedFile().getName().substring(fc.getSelectedFile().getName().lastIndexOf('.') + 1);
                 debug("Saving file " + fc.getSelectedFile() + "...");
                 switch (extension) {
                     case "xlsx":
-                        attendanceTable.writeExcel(fc.getSelectedFile(), true, module);
-                        message("Exporting as a spreadsheet was successful.\n");
-                        break;
                     case "xls":
                     case "xlt":
-                        attendanceTable.writeExcel(fc.getSelectedFile(), false, module);
-                        message("Exporting as a spreadsheet was successful.\n");
-                        break;
                     case "csv":
-                        attendanceTable.writeCSV(fc.getSelectedFile(), module);
-                        message("Exporting as a spreadsheet was successful.\n");
+                        save(extension, fc.getSelectedFile(), module);
                         break;
                     default:
-                        error("Unrecognized file extension: " + extension);
+                        File outFile = new File(fc.getSelectedFile().getParent(), leafName + "." + fileFilter.getExtensions()[0]);
+                        save(fileFilter.getExtensions()[0], outFile, module);
                         break;
                 }
+                message("Exporting as a spreadsheet was successful.\n");
             } catch (IOException e) {
                 error("Failed to create file: " + e.getMessage());
                 e.printStackTrace();
