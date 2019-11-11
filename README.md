@@ -18,4 +18,4 @@ Completed registers can be downloaded from eVision in .html format by navigating
 
 ![An example of saving an eVision register](example_saving_evision_register.png)
 
-It is possible to use parsereg to process multiple registers across multiple modules similtaneously; simply download all required registers within the same directory and parsereg will automatically separate attendance based on module. 
+It is possible to use parsereg to process multiple registers across multiple modules similtaneously; simply download all required registers within the same directory and parsereg will automatically separate attendance according to the module codes provided in the registers.
