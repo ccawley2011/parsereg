@@ -13,7 +13,6 @@ public class GUI extends JPanel implements ActionListener {
     private AttendanceTable attendanceTable = new AttendanceTable(this);
     private JFrame frame;
     private JButton open, save;
-    private JLabel label;
     public JTextArea console;
 
     public GUI(JFrame _frame) {
@@ -125,12 +124,10 @@ public class GUI extends JPanel implements ActionListener {
     }
 
     public class SaveThread extends Thread {
-        private GUI gui;
         private JFileChooser fc;
         private String module;
 
-        public SaveThread(GUI _gui, JFileChooser _fc, String _module) {
-            gui = _gui;
+        public SaveThread(JFileChooser _fc, String _module) {
             fc = _fc;
             module = _module;
         }
@@ -219,12 +216,12 @@ public class GUI extends JPanel implements ActionListener {
             open.setEnabled(false);
             save.setEnabled(false);
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            (new SaveThread(this, fc, (String) moduleList.getSelectedItem())).start();
+            (new SaveThread(fc, (String) moduleList.getSelectedItem())).start();
         }
 
     }
 
-    public static JFrame createAndShowGUI() {
+    public static void createAndShowGUI() {
         JFrame frame = new JFrame("ParseReg");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -235,7 +232,6 @@ public class GUI extends JPanel implements ActionListener {
         frame.pack();
         frame.setVisible(true);
 
-        return frame;
     }
 
     public static void main(String[] args) {

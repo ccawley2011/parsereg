@@ -1,5 +1,3 @@
-import java.util.logging.SimpleFormatter;
-
 public class RegisterEntry {
     public String studentNumber;
     public String studentName;

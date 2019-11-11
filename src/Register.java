@@ -88,7 +88,7 @@ public class Register {
             System.out.println("Unexpected number of tables in the document");
         }
 
-        entries = new ArrayList<>();
+        entries = new ArrayList<RegisterEntry>();
         loadTopTable(tables.first());
         loadMainTable(tables.last());
     }
