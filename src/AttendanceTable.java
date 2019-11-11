@@ -42,7 +42,7 @@ public class AttendanceTable {
         if (file.isDirectory()) {
             for (File subFile : file.listFiles()) {
                 String extension = subFile.getName().substring(subFile.getName().lastIndexOf('.') + 1);
-                if (extension.equals("htm") || extension.equals("html")) {
+                if (subFile.isDirectory() || extension.equals("htm") || extension.equals("html")) {
                     addRegister(subFile);
                 }
             }
