@@ -49,7 +49,7 @@ public class GUI extends JPanel implements ActionListener {
 
         add(controlPane);
 
-        debug("ParseReg v1.00\nReady for Input\n");
+        debug("ParseReg v1.01\nReady for Input\n");
     }
 
     public void actionPerformed(ActionEvent e) {
