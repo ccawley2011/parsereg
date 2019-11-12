@@ -16,6 +16,6 @@ parsereg requires at least version 7 of the [Java Runtime Environment](https://w
 
 Completed registers can be downloaded from eVision in .html format by navigating to the page, right-clicking, and selecting `Save As...`
 
-![An example of saving an eVision register](example_saving_evision_register.png)
+![An example of saving an eVision register](img/example_saving_evision_register.png)
 
 It is possible to use parsereg to process multiple registers across multiple modules similtaneously; simply download all required registers within the same directory and parsereg will automatically separate attendance according to the module codes provided in the registers.
