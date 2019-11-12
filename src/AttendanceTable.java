@@ -98,6 +98,14 @@ public class AttendanceTable {
                     }
                 }
 
+                cell = header.createCell(column++);
+                cell.setCellValue("Present");
+                cell.setCellStyle(headerStyle);
+
+                cell = header.createCell(column++);
+                cell.setCellValue("Present or not expected");
+                cell.setCellStyle(headerStyle);
+
                 int rowNumber = 1;
                 HashMap<String, AttendanceRow> students = modules.get(module);
                 for (Map.Entry me : students.entrySet()) {
@@ -105,11 +113,11 @@ public class AttendanceTable {
                     row.writeExcel(wb, sheet, sheet.createRow(rowNumber++), registers, module);
                 }
 
-                sheet.setAutoFilter(new CellRangeAddress(0, sheet.getLastRowNum(), 0, column + 1));
+                sheet.setAutoFilter(new CellRangeAddress(0, sheet.getLastRowNum(), 0, column - 1));
 
                 SheetConditionalFormatting sheetCF = sheet.getSheetConditionalFormatting();
                 CellRangeAddress[] regions = {
-                        new CellRangeAddress(1, sheet.getLastRowNum(), 2, column - 1)
+                        new CellRangeAddress(1, sheet.getLastRowNum(), 2, column - 3)
                 };
 
                 ConditionalFormattingRule presentRule = sheetCF.createConditionalFormattingRule(ComparisonOperator.EQUAL, "\"PRESENT\"");
@@ -152,7 +160,7 @@ public class AttendanceTable {
                 outFile.write(",\"" + register.startTime + "\"");
             }
         }
-        outFile.write('\n');
+        outFile.write(",Present,Present or not expected\n");
 
         HashMap<String, AttendanceRow> students = modules.get(module);
         for (Map.Entry me : students.entrySet()) {
