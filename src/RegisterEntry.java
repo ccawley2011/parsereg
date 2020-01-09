@@ -1,8 +1,8 @@
-public class RegisterEntry {
-    public String studentNumber;
-    public String studentName;
-    public Signature signature;
-    public String comments;
+class RegisterEntry {
+    String studentNumber;
+    String studentName;
+    Signature signature;
+    String comments;
 
     enum Signature {
         UNKNOWN,
@@ -11,7 +11,7 @@ public class RegisterEntry {
         NOT_EXPECTED
     }
 
-    public String getSignatureString(boolean checkComment) {
+    String getSignatureString(boolean checkComment) {
         if (signature == Signature.NOT_EXPECTED || (checkComment && !comments.isEmpty())) {
             return "NOT EXPECTED";
         } else if (signature == Signature.PRESENT) {
@@ -23,7 +23,7 @@ public class RegisterEntry {
         }
     }
 
-    public void setSignatureFromString(String string) {
+    void setSignatureFromString(String string) {
         if (string.contains("PRESENT")) {
             signature = Signature.PRESENT;
         } else if (string.contains("ABSENT")) {

@@ -10,15 +10,15 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class Register {
-    public String module;
-    public String refNos;
-    public String activity;
-    public int group;
-    public String room;
-    public Date startTime, endTime;
-    public String[] tutors;
-    public ArrayList<RegisterEntry> entries;
+class Register {
+    String module;
+    private String refNos;
+    private String activity;
+    private int group;
+    private String room;
+    Date startTime, endTime;
+    private String[] tutors;
+    ArrayList<RegisterEntry> entries;
 
     private void loadTopTable(Element table) throws ParseException {
         Elements rows = table.getElementsByTag("tr");
@@ -81,7 +81,7 @@ public class Register {
         }
     }
 
-    public Register(File file) throws IOException, ParseException {
+    Register(File file) throws IOException, ParseException {
         Document doc = Jsoup.parse(file, "UTF-8");
         Elements tables = doc.getElementsByTag("table");
         if (tables.size() != 2) {

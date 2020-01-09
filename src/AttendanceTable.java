@@ -11,17 +11,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AttendanceTable {
-    public ArrayList<String> moduleList = new ArrayList<String>();
-    public ArrayList<Register> registers = new ArrayList<Register>();
-    public HashMap<String, HashMap<String, AttendanceRow>> modules = new HashMap<String, HashMap<String, AttendanceRow>>();
+class AttendanceTable {
+    ArrayList<String> moduleList = new ArrayList<String>();
+    ArrayList<Register> registers = new ArrayList<Register>();
+    HashMap<String, HashMap<String, AttendanceRow>> modules = new HashMap<String, HashMap<String, AttendanceRow>>();
     private GUI gui;
 
-    public AttendanceTable(GUI _gui) {
+    AttendanceTable(GUI _gui) {
         gui = _gui;
     }
 
-    public void addRegister(Register register) {
+    void addRegister(Register register) {
         registers.add(register);
 
         if (!moduleList.contains(register.module)) {
@@ -38,7 +38,7 @@ public class AttendanceTable {
         }
     }
 
-    public void addRegister(File file) throws IOException, ParseException {
+    void addRegister(File file) throws IOException, ParseException {
         if (file.isDirectory()) {
             for (File subFile : file.listFiles()) {
                 String extension = subFile.getName().substring(subFile.getName().lastIndexOf('.') + 1);
@@ -52,13 +52,13 @@ public class AttendanceTable {
         }
     }
 
-    public void clear() {
+    void clear() {
         modules.clear();
         moduleList.clear();
         registers.clear();
     }
 
-    public void writeExcel(File output, boolean xssf, String defaultModule) throws IOException {
+    void writeExcel(File output, boolean xssf, String defaultModule) throws IOException {
         try (Workbook wb = WorkbookFactory.create(xssf)) {
             CellStyle headerStyle = wb.createCellStyle();
             Font font = wb.createFont();
@@ -152,7 +152,7 @@ public class AttendanceTable {
         }
     }
 
-    public void writeCSV(File output, String module) throws IOException {
+    void writeCSV(File output, String module) throws IOException {
         FileWriter outFile = new FileWriter(output);
         outFile.write("Student ID,Student Name");
         for (Register register : registers) {

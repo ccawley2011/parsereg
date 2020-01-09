@@ -7,17 +7,17 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
-public class AttendanceRow {
-    public String studentNumber;
-    public String studentName;
-    public HashMap<Date, RegisterEntry> lectures = new HashMap<Date, RegisterEntry>();
+class AttendanceRow {
+    private String studentNumber;
+    private String studentName;
+    HashMap<Date, RegisterEntry> lectures = new HashMap<Date, RegisterEntry>();
 
-    public AttendanceRow(String _studentNumber, String _studentName) {
+    AttendanceRow(String _studentNumber, String _studentName) {
         studentNumber = _studentNumber;
         studentName = _studentName;
     }
 
-    public void writeCSV(FileWriter outFile, ArrayList<Register> registers, String module) throws IOException {
+    void writeCSV(FileWriter outFile, ArrayList<Register> registers, String module) throws IOException {
         int present = 0, notExpected = 0;
         outFile.write("\"" + studentNumber + "\",\"" + studentName + "\"");
         for (Register register : registers) {
@@ -39,7 +39,7 @@ public class AttendanceRow {
         outFile.write("," + present + "," + (present + notExpected) + '\n');
     }
 
-    public void writeExcel(Workbook wb, Sheet sheet, Row row, ArrayList<Register> registers, String module) {
+    void writeExcel(Workbook wb, Sheet sheet, Row row, ArrayList<Register> registers, String module) {
         CreationHelper creationHelper = wb.getCreationHelper();
         Drawing<?> patr = sheet.createDrawingPatriarch();
         int column = 0;

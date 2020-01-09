@@ -13,9 +13,9 @@ public class GUI extends JPanel implements ActionListener {
     private AttendanceTable attendanceTable = new AttendanceTable(this);
     private JFrame frame;
     private JButton open, save;
-    public JTextArea console;
+    private JTextArea console;
 
-    public GUI(JFrame _frame) {
+    private GUI(JFrame _frame) {
         super();
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         frame = _frame;
@@ -63,16 +63,16 @@ public class GUI extends JPanel implements ActionListener {
         }
     }
 
-    public void debug(String message) {
+    void debug(String message) {
         console.append(message + "\n");
     }
 
-    public void message(String message) {
+    void message(String message) {
         console.append(message + "\n");
         JOptionPane.showMessageDialog(frame, message);
     }
 
-    public void error(String message) {
+    void error(String message) {
         console.append(message + "\n");
         JOptionPane.showMessageDialog(frame, message, "Error", JOptionPane.ERROR_MESSAGE);
     }
@@ -80,7 +80,7 @@ public class GUI extends JPanel implements ActionListener {
     public class OpenThread extends Thread {
         private JFileChooser fc;
 
-        public OpenThread(JFileChooser _fc) {
+        OpenThread(JFileChooser _fc) {
             fc = _fc;
         }
 
@@ -127,7 +127,7 @@ public class GUI extends JPanel implements ActionListener {
         private JFileChooser fc;
         private String module;
 
-        public SaveThread(JFileChooser _fc, String _module) {
+        SaveThread(JFileChooser _fc, String _module) {
             fc = _fc;
             module = _module;
         }
@@ -221,7 +221,7 @@ public class GUI extends JPanel implements ActionListener {
 
     }
 
-    public static void createAndShowGUI() {
+    private static void createAndShowGUI() {
         JFrame frame = new JFrame("ParseReg");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
