@@ -9,9 +9,10 @@ import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class GUI extends JPanel implements ActionListener {
-    private AttendanceTable attendanceTable = new AttendanceTable(this);
+    private AttendanceTable attendanceTable = new AttendanceTable();
     private JFrame frame;
     private JButton open, save;
     private JTextArea console;
@@ -85,11 +86,23 @@ public class GUI extends JPanel implements ActionListener {
             fc = _fc;
         }
 
+        void load(File file) throws IOException, ParseException {
+            String extension = file.getName().substring(file.getName().lastIndexOf('.') + 1);
+            if (file.isDirectory()) {
+                for (File subFile : Objects.requireNonNull(file.listFiles())) {
+                    load(subFile);
+                }
+            } else if (extension.equals("htm") || extension.equals("html")) {
+                debug("Parsing register " + file.getName() +  "...");
+                attendanceTable.addRegister(new EVisionRegister(file));
+            }
+        }
+
         public void run() {
             attendanceTable.clear();
             for (File input : fc.getSelectedFiles()) {
                 try {
-                    attendanceTable.addRegister(input);
+                    load(input);
                 } catch (IOException | ParseException e) {
                     error("Failed to open file: " + e.getMessage());
                     e.printStackTrace();
