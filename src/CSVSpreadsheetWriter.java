@@ -5,12 +5,6 @@ import java.util.ArrayList;
 import java.util.Map;
 
 class CSVSpreadsheetWriter extends SpreadsheetWriter {
-    private GUI gui;
-
-    CSVSpreadsheetWriter(GUI _gui) {
-        gui = _gui;
-    }
-
     private void writeAttendanceRow(AttendanceRow attendanceRow, FileWriter outFile, ArrayList<Register> registers) throws IOException {
         int present = 0, notExpected = 0;
         outFile.write("\"" + attendanceRow.studentNumber + "\",\"" + attendanceRow.studentName + "\"");

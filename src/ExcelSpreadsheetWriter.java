@@ -57,7 +57,7 @@ class ExcelSpreadsheetWriter extends SpreadsheetWriter {
         notExpectedSum.setCellFormula(presentSum.getAddress().formatAsString()+"+COUNTIF("+address.formatAsString()+",\"NOT EXPECTED\")");
     }
 
-    void writeModule(Workbook wb, Sheet sheet, Module module) throws IOException {
+    private void writeModule(Workbook wb, Sheet sheet, Module module) {
         CellStyle headerStyle = wb.createCellStyle();
         Font font = wb.createFont();
         font.setBold(true);

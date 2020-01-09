@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class Module {
+class Module {
     ArrayList<Register> registers = new ArrayList<Register>();
     HashMap<String, AttendanceRow> students = new HashMap<String, AttendanceRow>();
 

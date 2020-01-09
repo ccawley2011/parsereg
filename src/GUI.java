@@ -69,12 +69,12 @@ public class GUI extends JPanel implements ActionListener {
         console.append(message + "\n");
     }
 
-    void message(String message) {
+    private void message(String message) {
         console.append(message + "\n");
         JOptionPane.showMessageDialog(frame, message);
     }
 
-    void error(String message) {
+    private void error(String message) {
         console.append(message + "\n");
         JOptionPane.showMessageDialog(frame, message, "Error", JOptionPane.ERROR_MESSAGE);
     }
@@ -159,7 +159,7 @@ public class GUI extends JPanel implements ActionListener {
                     writer = new ExcelSpreadsheetWriter(gui, false);
                     break;
                 case "csv":
-                    writer = new CSVSpreadsheetWriter(gui);
+                    writer = new CSVSpreadsheetWriter();
                     break;
                 default:
                     error("Unrecognized file extension: " + extension);
