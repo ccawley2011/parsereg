@@ -126,29 +126,32 @@ public class GUI extends JPanel implements ActionListener {
     public class SaveThread extends Thread {
         private JFileChooser fc;
         private String module;
+        private GUI gui;
 
-        SaveThread(JFileChooser _fc, String _module) {
+        SaveThread(GUI _gui, JFileChooser _fc, String _module) {
+            gui = _gui;
             fc = _fc;
             module = _module;
         }
 
         private void save(String extension, File output, String defaultModule) throws IOException {
+            SpreadsheetWriter writer;
             switch (extension) {
                 case "xlsx":
-                    attendanceTable.writeExcel(output, true, defaultModule);
+                    writer = new ExcelSpreadsheetWriter(gui, true);
                     break;
                 case "xls":
                 case "xlt":
-                    attendanceTable.writeExcel(output, false, defaultModule);
+                    writer = new ExcelSpreadsheetWriter(gui, false);
                     break;
                 case "csv":
-                    attendanceTable.writeCSV(output, defaultModule);
+                    writer = new CSVSpreadsheetWriter(gui);
                     break;
                 default:
                     error("Unrecognized file extension: " + extension);
-                    break;
+                    return;
             }
-
+            writer.writeAttendanceTable(attendanceTable, output, defaultModule);
         }
 
         public void run() {
@@ -216,7 +219,7 @@ public class GUI extends JPanel implements ActionListener {
             open.setEnabled(false);
             save.setEnabled(false);
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            (new SaveThread(fc, (String) moduleList.getSelectedItem())).start();
+            (new SaveThread(this, fc, (String) moduleList.getSelectedItem())).start();
         }
 
     }
