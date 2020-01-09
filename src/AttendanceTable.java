@@ -3,11 +3,10 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 class AttendanceTable {
-    ArrayList<String> moduleList = new ArrayList<String>();
-    ArrayList<Register> registers = new ArrayList<Register>();
-    HashMap<String, HashMap<String, AttendanceRow>> modules = new HashMap<String, HashMap<String, AttendanceRow>>();
+    HashMap<String, Module> modules = new HashMap<String, Module>();
     private GUI gui;
 
     AttendanceTable(GUI _gui) {
@@ -15,20 +14,12 @@ class AttendanceTable {
     }
 
     void addRegister(Register register) {
-        registers.add(register);
-
-        if (!moduleList.contains(register.module)) {
-            moduleList.add(register.module);
-            modules.put(register.module, new HashMap<String, AttendanceRow>());
+        if (!modules.containsKey(register.module)) {
+            modules.put(register.module, new Module());
         }
 
-        HashMap<String, AttendanceRow> students = modules.get(register.module);
-        for (RegisterEntry entry : register.entries) {
-            if (!students.containsKey(entry.studentNumber)) {
-                students.put(entry.studentNumber, new AttendanceRow(entry.studentNumber, entry.studentName));
-            }
-            students.get(entry.studentNumber).lectures.put(register.getID(), entry);
-        }
+        Module module = modules.get(register.module);
+        module.addRegister(register);
     }
 
     void addRegister(File file) throws IOException, ParseException {
@@ -45,9 +36,18 @@ class AttendanceTable {
         }
     }
 
+    ArrayList<String> listModules() {
+        ArrayList<String> list = new ArrayList<String>();
+
+        for (Map.Entry me : modules.entrySet()) {
+            String name = (String) me.getKey();
+            list.add(name);
+        }
+
+        return list;
+    }
+
     void clear() {
         modules.clear();
-        moduleList.clear();
-        registers.clear();
     }
 }

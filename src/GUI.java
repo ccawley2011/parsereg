@@ -8,6 +8,7 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.ArrayList;
 
 public class GUI extends JPanel implements ActionListener {
     private AttendanceTable attendanceTable = new AttendanceTable(this);
@@ -95,7 +96,7 @@ public class GUI extends JPanel implements ActionListener {
                 }
             }
 
-            if (attendanceTable.registers.isEmpty()) {
+            if (attendanceTable.modules.isEmpty()) {
                 debug("No registers were found.\n");
             } else {
                 save.setEnabled(true);
@@ -210,7 +211,8 @@ public class GUI extends JPanel implements ActionListener {
         JLabel label = new JLabel("Default module:");
         accessory.add(label);
 
-        String[] moduleString = attendanceTable.moduleList.toArray(new String[attendanceTable.modules.size()]);
+        ArrayList<String> moduleArray = attendanceTable.listModules();
+        String[] moduleString = moduleArray.toArray(new String[moduleArray.size()]);
         JComboBox<String> moduleList = new JComboBox<String>(moduleString);
         accessory.add(moduleList);
 
