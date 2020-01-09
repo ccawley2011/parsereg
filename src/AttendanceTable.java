@@ -34,7 +34,7 @@ class AttendanceTable {
             if (!students.containsKey(entry.studentNumber)) {
                 students.put(entry.studentNumber, new AttendanceRow(entry.studentNumber, entry.studentName));
             }
-            students.get(entry.studentNumber).lectures.put(register.startTime, entry);
+            students.get(entry.studentNumber).lectures.put(register.getID(), entry);
         }
     }
 
@@ -48,7 +48,7 @@ class AttendanceTable {
             }
         } else {
             gui.debug("Parsing register " + file.getName() +  "...");
-            addRegister(new Register(file));
+            addRegister(new EVisionRegister(file));
         }
     }
 
@@ -93,7 +93,7 @@ class AttendanceTable {
                 for (Register register : registers) {
                     if (register.module.equals(module)) {
                         cell = header.createCell(column++);
-                        cell.setCellValue(register.startTime);
+                        cell.setCellValue(register.getID());
                         cell.setCellStyle(dateStyle);
                     }
                 }
@@ -157,7 +157,7 @@ class AttendanceTable {
         outFile.write("Student ID,Student Name");
         for (Register register : registers) {
             if (register.module.equals(module)) {
-                outFile.write(",\"" + register.startTime + "\"");
+                outFile.write(",\"" + register.getID() + "\"");
             }
         }
         outFile.write(",Present,Present or not expected\n");

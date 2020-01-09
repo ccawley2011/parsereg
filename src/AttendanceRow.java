@@ -10,7 +10,7 @@ import java.util.HashMap;
 class AttendanceRow {
     private String studentNumber;
     private String studentName;
-    HashMap<Date, RegisterEntry> lectures = new HashMap<Date, RegisterEntry>();
+    HashMap<String, RegisterEntry> lectures = new HashMap<String, RegisterEntry>();
 
     AttendanceRow(String _studentNumber, String _studentName) {
         studentNumber = _studentNumber;
@@ -22,8 +22,8 @@ class AttendanceRow {
         outFile.write("\"" + studentNumber + "\",\"" + studentName + "\"");
         for (Register register : registers) {
             if (register.module.equals(module)) {
-                if (lectures.containsKey(register.startTime)) {
-                    RegisterEntry entry = lectures.get(register.startTime);
+                if (lectures.containsKey(register.getID())) {
+                    RegisterEntry entry = lectures.get(register.getID());
                     outFile.write("," + entry.getSignatureString(true));
 
                     if (entry.signature == RegisterEntry.Signature.PRESENT) {
@@ -59,8 +59,8 @@ class AttendanceRow {
         for (Register register : registers) {
             if (register.module.equals(module)) {
                 cell = row.createCell(column++);
-                if (lectures.containsKey(register.startTime)) {
-                    RegisterEntry entry = lectures.get(register.startTime);
+                if (lectures.containsKey(register.getID())) {
+                    RegisterEntry entry = lectures.get(register.getID());
                     cell.setCellValue(entry.getSignatureString(true));
 
                     if (!entry.comments.isEmpty()) {
