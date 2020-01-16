@@ -5,6 +5,11 @@ import java.util.Map;
 class AttendanceTable {
     HashMap<String, Module> modules = new HashMap<String, Module>();
 
+    void addModule(String name, Module module) {
+        assert(!modules.containsKey(name));
+        modules.put(name, module);
+    }
+
     void addRegister(Register register) {
         if (!modules.containsKey(register.module)) {
             modules.put(register.module, new Module());

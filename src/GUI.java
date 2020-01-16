@@ -95,6 +95,9 @@ public class GUI extends JPanel implements ActionListener {
             } else if (extension.equals("htm") || extension.equals("html")) {
                 debug("Parsing register " + file.getName() +  "...");
                 attendanceTable.addRegister(new EVisionRegister(file));
+            } else if (extension.equals("csv")) {
+                debug("Parsing register " + file.getName() + "...");
+                attendanceTable.addModule(file.getName(), new UEALabModule(file));
             }
         }
 
@@ -126,6 +129,7 @@ public class GUI extends JPanel implements ActionListener {
         JFileChooser fc = new JFileChooser();
         fc.removeChoosableFileFilter(fc.getAcceptAllFileFilter());
         fc.addChoosableFileFilter(new FileNameExtensionFilter("HTML documents", "html", "htm"));
+        fc.addChoosableFileFilter(new FileNameExtensionFilter("CSV files", "csv"));
         fc.setMultiSelectionEnabled(true);
         fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 

@@ -9,6 +9,15 @@ class Module {
         registers.add(register);
     }
 
+    void addRegisterEntry(String id, RegisterEntry entry) {
+        for (Register register : registers) {
+            if (register.getID().equals(id)) {
+                register.entries.add(entry);
+                break;
+            }
+        }
+    }
+
     void finish() {
         for (Register register : registers) {
             for (RegisterEntry entry : register.entries) {

@@ -38,9 +38,9 @@ class RegisterEntry {
     }
 
     void setSignatureFromString(String string) {
-        if (string.contains("PRESENT")) {
+        if (string.contains("PRESENT") || string.equals("1")) {
             signature = Signature.PRESENT;
-        } else if (string.contains("ABSENT")) {
+        } else if (string.contains("ABSENT") || string.equals("0")) {
             signature = Signature.ABSENT;
         } else {
             signature = Signature.UNKNOWN;

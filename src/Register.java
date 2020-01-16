@@ -1,8 +1,19 @@
 import java.util.ArrayList;
 
-abstract class Register {
+class Register {
+    private String id;
     String module;
-    ArrayList<RegisterEntry> entries;
+    ArrayList<RegisterEntry> entries = new ArrayList<RegisterEntry>();
 
-    abstract String getID();
+    String getID() {
+        return id;
+    }
+
+    Register() {
+        id = "";
+    }
+
+    Register(String _id) {
+        id = _id;
+    }
 }
