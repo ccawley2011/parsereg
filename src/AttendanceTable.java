@@ -25,6 +25,13 @@ class AttendanceTable {
         return list;
     }
 
+    void finish() {
+        for (Map.Entry me : modules.entrySet()) {
+            Module module = (Module) me.getValue();
+            module.finish();
+        }
+    }
+
     void clear() {
         modules.clear();
     }

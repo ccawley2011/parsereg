@@ -103,6 +103,7 @@ public class GUI extends JPanel implements ActionListener {
             for (File input : fc.getSelectedFiles()) {
                 try {
                     load(input);
+                    attendanceTable.finish();
                 } catch (IOException | ParseException e) {
                     error("Failed to open file: " + e.getMessage());
                     e.printStackTrace();

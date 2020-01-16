@@ -7,12 +7,16 @@ class Module {
 
     void addRegister(Register register) {
         registers.add(register);
+    }
 
-        for (RegisterEntry entry : register.entries) {
-            if (!students.containsKey(entry.studentNumber)) {
-                students.put(entry.studentNumber, new AttendanceRow(entry.studentNumber, entry.studentName));
+    void finish() {
+        for (Register register : registers) {
+            for (RegisterEntry entry : register.entries) {
+                if (!students.containsKey(entry.studentNumber)) {
+                    students.put(entry.studentNumber, new AttendanceRow(entry.studentNumber, entry.studentName));
+                }
+                students.get(entry.studentNumber).lectures.put(register.getID(), entry);
             }
-            students.get(entry.studentNumber).lectures.put(register.getID(), entry);
         }
     }
 }
