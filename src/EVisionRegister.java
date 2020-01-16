@@ -64,21 +64,11 @@ public class EVisionRegister extends Register {
         for (Element row : rows) {
             Elements columns = row.getElementsByTag("td");
             if (columns.size() >= 5) {
-                RegisterEntry entry = new RegisterEntry();
-                entry.studentNumber = columns.get(1).text();
-                entry.studentName = columns.get(2).text();
-                entry.setSignatureFromString(columns.get(3).text());
-                entry.comments = columns.get(4).html().replaceAll("<([^<]*)>", "");
-                entries.add(entry);
+                entries.add(new RegisterEntry(columns.get(1).text(), columns.get(2).text(), columns.get(3).text(), columns.get(4).html().replaceAll("<([^<]*)>", "")));
             }
 
             if (columns.size() >= 10) {
-                RegisterEntry entry = new RegisterEntry();
-                entry.studentNumber = columns.get(6).text();
-                entry.studentName = columns.get(7).text();
-                entry.setSignatureFromString(columns.get(8).text());
-                entry.comments = columns.get(9).html().replaceAll("<([^<]*)>", "");
-                entries.add(entry);
+                entries.add(new RegisterEntry(columns.get(6).text(), columns.get(7).text(), columns.get(8).text(), columns.get(9).html().replaceAll("<([^<]*)>", "")));
             }
         }
     }

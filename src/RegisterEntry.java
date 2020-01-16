@@ -11,6 +11,20 @@ class RegisterEntry {
         NOT_EXPECTED
     }
 
+    RegisterEntry(String _studentNumber, String _studentName, Signature _signature, String _comments) {
+        studentNumber = _studentNumber;
+        studentName = _studentName;
+        signature = _signature;
+        comments = _comments;
+    }
+
+    RegisterEntry(String _studentNumber, String _studentName, String _signature, String _comments) {
+        studentNumber = _studentNumber;
+        studentName = _studentName;
+        setSignatureFromString(_signature);
+        comments = _comments;
+    }
+
     String getSignatureString(boolean checkComment) {
         if (signature == Signature.NOT_EXPECTED || (checkComment && !comments.isEmpty())) {
             return "NOT EXPECTED";
