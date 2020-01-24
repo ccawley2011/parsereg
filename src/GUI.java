@@ -128,6 +128,7 @@ public class GUI extends JPanel implements ActionListener {
     private void openFileDialog() {
         JFileChooser fc = new JFileChooser();
         fc.removeChoosableFileFilter(fc.getAcceptAllFileFilter());
+        fc.addChoosableFileFilter(new FileNameExtensionFilter("All supported formats", "html", "htm", "csv"));
         fc.addChoosableFileFilter(new FileNameExtensionFilter("HTML documents", "html", "htm"));
         fc.addChoosableFileFilter(new FileNameExtensionFilter("CSV files", "csv"));
         fc.setMultiSelectionEnabled(true);
@@ -186,16 +187,17 @@ public class GUI extends JPanel implements ActionListener {
             }
 
             try {
-                debug("Saving file " + fc.getSelectedFile() + "...");
                 switch (extension) {
                     case "xlsx":
                     case "xls":
                     case "xlt":
                     case "csv":
+                        debug("Saving file " + fc.getSelectedFile() + "...");
                         save(extension, fc.getSelectedFile(), module);
                         break;
                     default:
                         File outFile = new File(fc.getSelectedFile().getParent(), leafName + "." + fileFilter.getExtensions()[0]);
+                        debug("Saving file " + outFile + "...");
                         save(fileFilter.getExtensions()[0], outFile, module);
                         break;
                 }
