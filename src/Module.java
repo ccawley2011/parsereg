@@ -2,8 +2,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 class Module {
-    ArrayList<Register> registers = new ArrayList<Register>();
-    HashMap<String, AttendanceRow> students = new HashMap<String, AttendanceRow>();
+    ArrayList<Register> registers = new ArrayList<>();
+    HashMap<String, AttendanceRow> students = new HashMap<>();
 
     void addRegister(Register register) {
         registers.add(register);

@@ -3,7 +3,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 class AttendanceTable {
-    HashMap<String, Module> modules = new HashMap<String, Module>();
+    HashMap<String, Module> modules = new HashMap<>();
 
     void addModule(String name, Module module) {
         assert(!modules.containsKey(name));
@@ -20,7 +20,7 @@ class AttendanceTable {
     }
 
     ArrayList<String> listModules() {
-        ArrayList<String> list = new ArrayList<String>();
+        ArrayList<String> list = new ArrayList<>();
 
         for (Map.Entry me : modules.entrySet()) {
             String name = (String) me.getKey();

@@ -231,7 +231,7 @@ public class GUI extends JPanel implements ActionListener {
 
         ArrayList<String> moduleArray = attendanceTable.listModules();
         String[] moduleString = moduleArray.toArray(new String[moduleArray.size()]);
-        JComboBox<String> moduleList = new JComboBox<String>(moduleString);
+        JComboBox<String> moduleList = new JComboBox<>(moduleString);
         accessory.add(moduleList);
 
         int returnVal = fc.showSaveDialog(frame);
